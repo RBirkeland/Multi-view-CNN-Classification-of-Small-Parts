@@ -31,12 +31,12 @@ transform_test = transforms.Compose([
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-use_all = False
+use_modelnet = False
 
 resume = False
 only_test = False
 
-if use_all:
+if use_modelnet:
     from custom_dataset2 import MultiViewDataSet
     dset_train = MultiViewDataSet('../MVCNN-PyTorch/classes', 'train', transform=transform_train)
     train_loader = DataLoader(dset_train, batch_size=4, shuffle=True, num_workers=2)

@@ -28,11 +28,16 @@ class MultiViewDataSet(Dataset):
         for label in os.listdir(root):
             for item in os.listdir(root + '/' + label):
                 views = []
-                for view in os.listdir(root + '/' + label + '/' + item):
-                    views.append(root + '/' + label + '/' + item + '/' + view)
+                #for view in os.listdir(root + '/' + label + '/' + item):
+                if root + '/' + label + '/' + item not in self.x:
+                    views.append(root + '/' + label + '/' + item)
+                    if "_1" in (root + '/' + label + '/' + item):
+                        views.append((root + '/' + label + '/' + item).replace("_1" ,"_2"))
+                    else:
+                        views.append((root + '/' + label + '/' + item).replace("_2", "_1"))
 
-                self.x.append(views)
-                self.y.append(class_to_idx[label])
+                    self.x.append(views)
+                    self.y.append(class_to_idx[label])
 
     # Override to give PyTorch access to any image on the dataset
     def __getitem__(self, index):

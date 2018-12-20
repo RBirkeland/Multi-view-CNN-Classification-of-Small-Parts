@@ -32,6 +32,9 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 ## SETTINGS ##
+modelnet_dataset = '../modelnet'  # Only needed if use_modelnet is True
+dataset_path = '../all'           # Only needed if use_modelnet is False
+
 use_modelnet = False      # Use dataloader that supports the ModelNet structure
 
 resume = False            # Resume from checkpoint
@@ -42,10 +45,6 @@ n_epochs = 25
 batch_size = 4
 
 architecture = 'resnet'  # Architecture (either alexnet or resnet)
-
-modelnet_dataset = '../modelnet'
-dataset_path = '../all'
-
 ##############
 
 if use_modelnet:

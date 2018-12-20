@@ -3,6 +3,7 @@
 *.tar
 logs/
 checkpoint/
+.idea
 
 
 # Byte-compiled / optimized / DLL files

@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 
 
-__all__ = ['Alexnet', 'mvcnn']
+__all__ = ['Alexnet', 'alexnet']
 
 
 model_urls = {
@@ -59,7 +59,7 @@ class Alexnet(nn.Module):
         return pooled_view
 
 
-def mvcnn(pretrained=False, **kwargs):
+def alexnet(pretrained=False, **kwargs):
     r"""MVCNN model architecture from the
     `"Multi-view Convolutional..." <hhttp://vis-www.cs.umass.edu/mvcnn/docs/su15mvcnn.pdf>`_ paper.
     Args:

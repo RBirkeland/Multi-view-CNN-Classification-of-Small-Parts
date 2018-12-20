@@ -12,7 +12,6 @@ import os
 
 from models import resnet, alexnet
 import util
-from logger import Logger
 import matplotlib.pyplot as plt
 
 print('Loading data')
@@ -31,33 +30,43 @@ transform_test = transforms.Compose([
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-use_modelnet = False
 
-resume = False
-only_test = False
+## SETTINGS ##
+use_modelnet = False      # Use dataloader that supports the ModelNet structure
+
+resume = False            # Resume from checkpoint
+only_test = False         # Evaluation, only run on test set
+
+lr = 0.0001    
+n_epochs = 25
+batch_size = 4
+
+architecture = 'resnet'  # Architecture (either alexnet or resnet)
+
+##############
 
 if use_modelnet:
     from custom_dataset2 import MultiViewDataSet
     dset_train = MultiViewDataSet('../MVCNN-PyTorch/classes', 'train', transform=transform_train)
-    train_loader = DataLoader(dset_train, batch_size=4, shuffle=True, num_workers=2)
+    train_loader = DataLoader(dset_train, batch_size=batch_size, shuffle=True, num_workers=2)
 
     dset_val = MultiViewDataSet('../MVCNN-PyTorch/classes', 'val', transform=transform_test)
-    val_loader = DataLoader(dset_val, batch_size=4, shuffle=True, num_workers=2)
+    val_loader = DataLoader(dset_val, batch_size=batch_size, shuffle=False, num_workers=2)
 
     dset_test = MultiViewDataSet('../MVCNN-PyTorch/classes', 'test', transform=transform_test)
-    test_loader = DataLoader(dset_test, batch_size=4, shuffle=True, num_workers=2)
+    test_loader = DataLoader(dset_test, batch_size=batch_size, shuffle=False, num_workers=2)
 
 
 else:
     from custom_dataset import MultiViewDataSet
-    dset_train = MultiViewDataSet('../datasets/all/train', transform=transform_train)
-    train_loader = DataLoader(dset_train, batch_size=4, shuffle=True, num_workers=2)
+    dset_train = MultiViewDataSet('../all/train', transform=transform_train)
+    train_loader = DataLoader(dset_train, batch_size=batch_size, shuffle=True, num_workers=2)
 
-    dset_val = MultiViewDataSet('../datasets/all/val', transform=transform_test)
-    val_loader = DataLoader(dset_val, batch_size=4, shuffle=False, num_workers=2)
+    dset_val = MultiViewDataSet('../all/val', transform=transform_test)
+    val_loader = DataLoader(dset_val, batch_size=batch_size, shuffle=False, num_workers=2)
 
-    dset_test = MultiViewDataSet('../datasets/all/test', transform=transform_test)
-    test_loader = DataLoader(dset_test, batch_size=4, shuffle=False, num_workers=2)
+    dset_test = MultiViewDataSet('../all/test', transform=transform_test)
+    test_loader = DataLoader(dset_test, batch_size=batch_size, shuffle=False, num_workers=2)
 
 
 classes = dset_train.classes
@@ -69,21 +78,22 @@ train_acc = []
 val_loss = []
 val_acc = []
 
-resnet = resnet.resnet18(num_classes=len(classes))
+if architecture == 'resnet':
+    resnet = resnet.resnet18(num_classes=len(classes))
+elif architecture == 'alexnet':
+    resnet = alexnet.alexnet(pretrained=True)
+else:
+    print('Not a valid architecture')
+    exit()
 resnet.to(device)
-
-#resnet = alexnet.mvcnn(pretrained=True)
-#resnet.to(device)
 
 cudnn.benchmark = True
 
 print(device)
 
-logger = Logger('logs')
-
 # Loss and Optimizer
 criterion = nn.CrossEntropyLoss()
-lr = 0.0001
+
 # optimizer = torch.optim.Adam(resnet.parameters(), lr=lr)
 optimizer = torch.optim.SGD(
     resnet.parameters(),
@@ -91,8 +101,6 @@ optimizer = torch.optim.SGD(
     momentum=0.9,
     weight_decay=1e-4
 )
-
-n_epochs = 25
 
 best_acc = 0.0
 best_loss = 0.0
@@ -244,8 +252,6 @@ for epoch in range(start_epoch, n_epochs):
     print('\nEvaluation:')
     print('\tVal Acc: %.2f - Loss: %.4f' % (avg_test_acc.item(), avg_loss.item()))
     print('\tCurrent best val acc: %.2f' % best_acc)
-
-    util.logEpoch(logger, resnet, epoch + 1, avg_loss, avg_test_acc)
 
     # Save model
     if avg_test_acc > best_acc:

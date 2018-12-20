@@ -5,11 +5,14 @@
 mkdir checkpoint
 ```
 
-## Make virtualenv for Python 2.7
+## Make virtualenv for Python 2.7 and install packages
 ```
 virtualenv --python=/usr/bin/python2.7 --no-site-packages env
 source env/bin/activate
+
+pip install -r requirements.txt 
 ```
+
 ## Settings (inside controller.py)
 ```
 use_modelnet = False      # Use dataloader that supports the ModelNet structure

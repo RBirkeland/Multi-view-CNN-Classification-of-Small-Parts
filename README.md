@@ -1,1 +1,30 @@
 # Multi-view-CNN-Classification-of-Small-Parts
+
+## Setup
+```
+mkdir checkpoint
+```
+
+## Make virtualenv for Python 2.7
+```
+virtualenv --python=/usr/bin/python2.7 --no-site-packages env
+source env/bin/activate
+```
+## Settings (inside controller.py)
+```
+use_modelnet = False      # Use dataloader that supports the ModelNet structure
+
+resume = False            # Resume from checkpoint
+only_test = False         # Evaluation, only run on test set
+
+lr = 0.0001    
+n_epochs = 25
+batch_size = 4
+
+architecture = 'resnet'  # Architecture (either alexnet or resnet)
+```
+
+## Run network
+```
+python controller.py
+```

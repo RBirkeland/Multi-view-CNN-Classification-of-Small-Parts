@@ -37,35 +37,38 @@ use_modelnet = False      # Use dataloader that supports the ModelNet structure
 resume = False            # Resume from checkpoint
 only_test = False         # Evaluation, only run on test set
 
-lr = 0.0001    
+lr = 0.0001
 n_epochs = 25
 batch_size = 4
 
 architecture = 'resnet'  # Architecture (either alexnet or resnet)
 
+modelnet_dataset = '../modelnet'
+dataset_path = '../all'
+
 ##############
 
 if use_modelnet:
     from custom_dataset2 import MultiViewDataSet
-    dset_train = MultiViewDataSet('../MVCNN-PyTorch/classes', 'train', transform=transform_train)
+    dset_train = MultiViewDataSet(modelnet_dataset, 'train', transform=transform_train)
     train_loader = DataLoader(dset_train, batch_size=batch_size, shuffle=True, num_workers=2)
 
-    dset_val = MultiViewDataSet('../MVCNN-PyTorch/classes', 'val', transform=transform_test)
+    dset_val = MultiViewDataSet(modelnet_dataset, 'val', transform=transform_test)
     val_loader = DataLoader(dset_val, batch_size=batch_size, shuffle=False, num_workers=2)
 
-    dset_test = MultiViewDataSet('../MVCNN-PyTorch/classes', 'test', transform=transform_test)
+    dset_test = MultiViewDataSet(modelnet_dataset, 'test', transform=transform_test)
     test_loader = DataLoader(dset_test, batch_size=batch_size, shuffle=False, num_workers=2)
 
 
 else:
     from custom_dataset import MultiViewDataSet
-    dset_train = MultiViewDataSet('../all/train', transform=transform_train)
+    dset_train = MultiViewDataSet(dataset_path + '/train', transform=transform_train)
     train_loader = DataLoader(dset_train, batch_size=batch_size, shuffle=True, num_workers=2)
 
-    dset_val = MultiViewDataSet('../all/val', transform=transform_test)
+    dset_val = MultiViewDataSet(dataset_path + '/val', transform=transform_test)
     val_loader = DataLoader(dset_val, batch_size=batch_size, shuffle=False, num_workers=2)
 
-    dset_test = MultiViewDataSet('../all/test', transform=transform_test)
+    dset_test = MultiViewDataSet(dataset_path + '/test', transform=transform_test)
     test_loader = DataLoader(dset_test, batch_size=batch_size, shuffle=False, num_workers=2)
 
 
